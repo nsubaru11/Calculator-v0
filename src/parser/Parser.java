@@ -1,4 +1,5 @@
 package parser;
+
 import model.Symbol;
 import model.Term;
 import model.Type;
@@ -37,13 +38,15 @@ public class Parser {
 			Term monomial = parseMonomial(reader);
 			term = getNextTerm(operator, term, monomial);
 			operator = reader.peek();
-			if (operator == null) break;
-			if (operator.symbol.equals(")")) break;
+			if (operator == null)
+				break;
+			if (operator.symbol.equals(")"))
+				break;
 			operator = reader.read();
 		}
 		return term;
 	}
-	
+
 	/**
 	 * 単項式を解析し、ASTを生成する。 数値、括弧、負の数、および演算子("*", "/")を処理する。
 	 *
@@ -56,20 +59,18 @@ public class Parser {
 		Symbol operator = null;
 		while (true) {
 			Symbol newSymbol = reader.read();
-			if (newSymbol == null) throw new ExpressionParseException("a number or parenthesis", EXPRESSION);
+			if (newSymbol == null)
+				throw new ExpressionParseException("a number or parenthesis", EXPRESSION);
 			term = switch (newSymbol.type) {
-			case NUMBER
-				-> getNextTerm(operator, term, new Term(newSymbol, null, null));
-			case OPERATOR
-				-> getNextTerm(operator, term, parseNegatedTerm(newSymbol, reader));
-			case PARENTHESIS
-				-> getNextTerm(operator, term, perseParenthesizedTerm(newSymbol, reader));
-			case MATHFUNCTION
-				-> throw new ExpressionParseException("comming sooon");
+			case NUMBER -> getNextTerm(operator, term, new Term(newSymbol, null, null));
+			case OPERATOR -> getNextTerm(operator, term, parseNegatedTerm(newSymbol, reader));
+			case PARENTHESIS -> getNextTerm(operator, term, perseParenthesizedTerm(newSymbol, reader));
+			case MATHFUNCTION -> throw new ExpressionParseException("comming sooon");
 			};
 
 			operator = reader.peek();
-			if (operator == null) break;
+			if (operator == null)
+				break;
 
 			String symbol = operator.symbol;
 			switch (operator.type) {
@@ -80,11 +81,13 @@ public class Parser {
 				operator = reader.read();
 				break;
 			case PARENTHESIS:
-				if (symbol.equals(")")) return term;
+				if (symbol.equals(")"))
+					return term;
 				operator = new Symbol("*", Type.OPERATOR);
 				break;
 			default:
-				throw new ExpressionParseException("operator or parenthesis", symbol, EXPRESSION, reader.getPosition() + 1);
+				throw new ExpressionParseException("operator or parenthesis", symbol, EXPRESSION,
+						reader.getPosition() + 1);
 			}
 		}
 		return term;
@@ -94,7 +97,7 @@ public class Parser {
 	 * 括弧を処理し、その中身を再帰的に解析する。
 	 *
 	 * @param newSymbol 現在のシンボル: '(' or ')'
-	 * @param reader   入力を管理するReaderオブジェクト
+	 * @param reader    入力を管理するReaderオブジェクト
 	 * @return 括弧内の内容を表現するTermオブジェクト
 	 * @throws ExpressionParseException 式が不正な場合
 	 */
@@ -115,7 +118,7 @@ public class Parser {
 	 * 負の数や負の係数を処理する。 単独の負の数、または括弧付きの負数を解析する。
 	 *
 	 * @param newSymbol 現在のシンボル（負号）
-	 * @param reader   入力を管理するReaderオブジェクト
+	 * @param reader    入力を管理するReaderオブジェクト
 	 * @return 負数を表現するTermオブジェクト
 	 * @throws ExpressionParseException 式が不正な場合
 	 */
@@ -131,21 +134,23 @@ public class Parser {
 					Term left = new Term(new Symbol("-1", Type.NUMBER), null, null);
 					return new Term(mul, left, perseParenthesizedTerm(newSymbol, reader));
 				} else {
-					throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION, reader.getPosition());
+					throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION,
+							reader.getPosition());
 				}
 			} else {
 				throw new ExpressionParseException("a number or parenthesis", EXPRESSION);
 			}
 		}
-		throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION, reader.getPosition() - 1);
+		throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION,
+				reader.getPosition() - 1);
 	}
 
 	/**
 	 * 与えられた演算子で2つのTermオブジェクトを結合する。 演算子が存在しない場合、新しいTermとしてそのまま返す。
 	 *
 	 * @param operator 現在の演算子
-	 * @param prevTerm     左項のTermオブジェクト
-	 * @param newTerm 右項のTermオブジェクト
+	 * @param prevTerm 左項のTermオブジェクト
+	 * @param newTerm  右項のTermオブジェクト
 	 * @return 演算結果を表現するTermオブジェクト
 	 */
 	private static Term getNextTerm(Symbol operator, Term prevTerm, Term newTerm) {

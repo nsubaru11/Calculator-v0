@@ -1,0 +1,36 @@
+# OSごとの不要なファイル
+.DS_Store
+Thumbs.db
+._*
+desktop.ini
+
+# Compiled class file
+*.class
+
+# Eclipse and IntelliJ project files
+*.iml
+*.ipr
+*.iws
+.idea/
+.classpath
+.project
+.settings/
+
+# Build directories
+bin/
+target/
+out/
+build/
+.gradle/
+
+# Maven-specific
+.mvn/
+
+# Logs
+*.log
+
+# Node.js (フロントエンド用)
+node_modules/
+
+# Python Virtual Environment
+venv/
