@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigInteger;
 
@@ -15,7 +16,7 @@ import parser.Reader;
 public class ParserTests {
 
 	@Nested
-	public static class BigFractionTests {
+	public class BigFractionTests {
 		@Test
 		void testDoParse() {
 
@@ -45,7 +46,7 @@ public class ParserTests {
 	}
 
 	@Nested
-	public static class testTerm {
+	public class testTerm {
 
 		@Test
 		void testCalc() {
@@ -74,7 +75,7 @@ public class ParserTests {
 	}
 
 	@Nested
-	public static class testReader {
+	public class testReader {
 
 		@Test
 		void test() {
@@ -106,8 +107,8 @@ public class ParserTests {
 			assertEquals(new Symbol("3", Type.NUMBER), reader.peek());
 			assertEquals(new Symbol("3", Type.NUMBER), reader.read());
 
-			assertEquals(null, reader.read());
-			assertEquals(null, reader.peek());
+			assertNull(reader.read());
+			assertNull(reader.peek());
 		}
 	}
 }

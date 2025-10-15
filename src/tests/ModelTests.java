@@ -1,9 +1,5 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -15,10 +11,12 @@ import model.Symbol;
 import model.Term;
 import model.Type;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ModelTests {
 
 	@Nested
-	public static class BigFractionTests {
+	public class BigFractionTests {
 
 		@Test
 		void testValueOf() {
@@ -109,10 +107,10 @@ public class ModelTests {
 		void testEquals() {
 			BigFraction a = new BigFraction(3, 4);
 			BigFraction b = new BigFraction(6, 8);
-			assertEquals(true, a.equals(b));
-			assertEquals(true, a.equals(a));
+			assertEquals(a, b);
+			assertEquals(a, a);
 //			assertEquals(false, a.equals(0));
-			assertEquals(false, a.equals(null));
+			assertNotEquals(null, a);
 		}
 
 		@Test
@@ -127,18 +125,18 @@ public class ModelTests {
 		@Test
 		void testCompares() {
 			BigFraction a = new BigFraction(0);
-			assertEquals(true, a.isZero());
-			assertEquals(false, a.isOne());
+			assertTrue(a.isZero());
+			assertFalse(a.isOne());
 			a = a.pow(0);
-			assertEquals(false, a.isZero());
-			assertEquals(true, a.isOne());
-			assertEquals(true, a.isInteger());
-			assertEquals(false, a.isProper());
-			assertEquals(true, a.isImproper());
+			assertFalse(a.isZero());
+			assertTrue(a.isOne());
+			assertTrue(a.isInteger());
+			assertFalse(a.isProper());
+			assertTrue(a.isImproper());
 			a = a.div(3);
-			assertEquals(false, a.isInteger());
-			assertEquals(true, a.isProper());
-			assertEquals(false, a.isImproper());
+			assertFalse(a.isInteger());
+			assertTrue(a.isProper());
+			assertFalse(a.isImproper());
 		}
 
 		@Test
@@ -147,8 +145,8 @@ public class ModelTests {
 			BigFraction b = new BigFraction(3, 2);
 			assertEquals(a.inverse(), b);
 			assertEquals(a.negate(), a.mul(-1));
-			assertEquals(b.fractionPart(), BigFraction.ONEHALF);
-			assertEquals(b.integerPart(), BigInteger.ONE);
+			assertEquals(BigFraction.ONEHALF, b.fractionPart());
+			assertEquals(BigInteger.ONE, b.integerPart());
 		}
 
 		@Test
@@ -290,17 +288,17 @@ public class ModelTests {
 	}
 
 	@Nested
-	public static class SymbolTests {
+	public class SymbolTests {
 
 		@Test
 		void testSymbolCreation() {
 			Symbol operator = new Symbol("+", Type.OPERATOR);
-			assertEquals(true, operator.equals(operator));
-			assertEquals(false, operator.equals(null));
-			assertEquals(true, operator.equals(new Symbol("+", Type.OPERATOR)));
-			assertEquals(false, operator.equals(new Symbol("-", Type.OPERATOR)));
-			assertEquals(false, operator.equals(new Symbol("1", Type.NUMBER)));
-			assertEquals(false, operator.equals(new Symbol("+", Type.NUMBER)));
+			assertEquals(operator, operator);
+			assertNotEquals(null, operator);
+			assertEquals(new Symbol("+", Type.OPERATOR), operator);
+			assertNotEquals(new Symbol("-", Type.OPERATOR), operator);
+			assertNotEquals(new Symbol("1", Type.NUMBER), operator);
+			assertNotEquals(new Symbol("+", Type.NUMBER), operator);
 		}
 
 		@Test
@@ -321,7 +319,7 @@ public class ModelTests {
 	}
 
 	@Nested
-	public static class TermTests {
+	public class TermTests {
 
 		@Test
 		void testAddition() {
@@ -384,7 +382,7 @@ public class ModelTests {
 	}
 
 	@Nested
-	public static class TypeTests {
+	public class TypeTests {
 
 		@Test
 		void testTypeEnum() {

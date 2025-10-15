@@ -1,15 +1,21 @@
 package parser;
+
 import model.Symbol;
 import model.Type;
 
 public class Reader {
-	private int pos, len;
 	private final char[] expression;
+	private final int len;
+	private int pos;
 
 	public Reader(String expression) {
 		pos = 0;
 		len = expression.length();
 		this.expression = expression.toCharArray();
+	}
+
+	private static String str(char c) {
+		return Character.toString(c);
 	}
 
 	public Symbol read() {
@@ -22,45 +28,46 @@ public class Reader {
 		// 次のSymbolの読み込み
 		Symbol symbol = null;
 		switch (c) {
-		case '-', '+', '*', '/':
-			symbol = new Symbol(str(c), Type.OPERATOR);
-			break;
+			case '-', '+', '*', '/':
+				symbol = new Symbol(str(c), Type.OPERATOR);
+				break;
 
-		case '(', ')':
-			symbol = new Symbol(str(c), Type.PARENTHESIS);
-			break;
+			case '(', ')':
+				symbol = new Symbol(str(c), Type.PARENTHESIS);
+				break;
 
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			StringBuffer sb = new StringBuffer(str(c));
-			while (pos < len) {
-				c = expression[pos];
-				if (Character.isDigit(c) || c == '.') {
-					sb.append(c);
-					pos++;
-				} else {
-					break;
-				}
-			}
-			symbol = new Symbol(sb.toString(), Type.NUMBER);
-			break;
-
-		case ' ': break;
-
-		default:
-			if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
-				StringBuffer sb2 = new StringBuffer(str(c));
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				StringBuilder sb = new StringBuilder(str(c));
 				while (pos < len) {
 					c = expression[pos];
-					if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
-						sb2.append(c);
+					if (Character.isDigit(c) || c == '.') {
+						sb.append(c);
 						pos++;
 					} else {
 						break;
 					}
 				}
-				symbol = new Symbol(sb2.toString(), Type.MATHFUNCTION);
-			}
-			break;
+				symbol = new Symbol(sb.toString(), Type.NUMBER);
+				break;
+
+			case ' ':
+				break;
+
+			default:
+				if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
+					StringBuilder sb2 = new StringBuilder(str(c));
+					while (pos < len) {
+						c = expression[pos];
+						if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
+							sb2.append(c);
+							pos++;
+						} else {
+							break;
+						}
+					}
+					symbol = new Symbol(sb2.toString(), Type.MATHFUNCTION);
+				}
+				break;
 		}
 		return symbol;
 	}
@@ -76,23 +83,24 @@ public class Reader {
 
 		Symbol symbol = null;
 		switch (c) {
-		case '-', '+', '*', '/':
-			symbol = new Symbol(str(c), Type.OPERATOR);
-			break;
+			case '-', '+', '*', '/':
+				symbol = new Symbol(str(c), Type.OPERATOR);
+				break;
 
-		case '(', ')':
-			symbol = new Symbol(str(c), Type.PARENTHESIS);
-			break;
+			case '(', ')':
+				symbol = new Symbol(str(c), Type.PARENTHESIS);
+				break;
 
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			symbol = new Symbol(str(c), Type.NUMBER);
-			break;
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				symbol = new Symbol(str(c), Type.NUMBER);
+				break;
 
-		case ' ': break;
+			case ' ':
+				break;
 
-		default:
-			symbol = new Symbol(str(c), Type.MATHFUNCTION);
-			break;
+			default:
+				symbol = new Symbol(str(c), Type.MATHFUNCTION);
+				break;
 		}
 
 		return symbol;
@@ -100,10 +108,6 @@ public class Reader {
 
 	public int getPosition() {
 		return pos;
-	}
-
-	private static String str(char c) {
-		return Character.toString(c);
 	}
 
 }

@@ -38,10 +38,8 @@ public class Parser {
 			Term monomial = parseMonomial(reader);
 			term = getNextTerm(operator, term, monomial);
 			operator = reader.peek();
-			if (operator == null)
-				break;
-			if (operator.symbol.equals(")"))
-				break;
+			if (operator == null) break;
+			if (operator.symbol().equals(")")) break;
 			operator = reader.read();
 		}
 		return term;
@@ -61,33 +59,28 @@ public class Parser {
 			Symbol newSymbol = reader.read();
 			if (newSymbol == null)
 				throw new ExpressionParseException("a number or parenthesis", EXPRESSION);
-			term = switch (newSymbol.type) {
-			case NUMBER -> getNextTerm(operator, term, new Term(newSymbol, null, null));
-			case OPERATOR -> getNextTerm(operator, term, parseNegatedTerm(newSymbol, reader));
-			case PARENTHESIS -> getNextTerm(operator, term, perseParenthesizedTerm(newSymbol, reader));
-			case MATHFUNCTION -> throw new ExpressionParseException("comming sooon");
+			term = switch (newSymbol.type()) {
+				case NUMBER -> getNextTerm(operator, term, new Term(newSymbol, null, null));
+				case OPERATOR -> getNextTerm(operator, term, parseNegatedTerm(newSymbol, reader));
+				case PARENTHESIS -> getNextTerm(operator, term, perseParenthesizedTerm(newSymbol, reader));
+				case MATHFUNCTION -> throw new ExpressionParseException("comming sooon");
 			};
 
 			operator = reader.peek();
-			if (operator == null)
-				break;
+			if (operator == null) break;
 
-			String symbol = operator.symbol;
-			switch (operator.type) {
-			case OPERATOR:
-				if (symbol.equals("+") || symbol.equals("-")) {
-					return term;
-				}
-				operator = reader.read();
-				break;
-			case PARENTHESIS:
-				if (symbol.equals(")"))
-					return term;
-				operator = new Symbol("*", Type.OPERATOR);
-				break;
-			default:
-				throw new ExpressionParseException("operator or parenthesis", symbol, EXPRESSION,
-						reader.getPosition() + 1);
+			String symbol = operator.symbol();
+			switch (operator.type()) {
+				case OPERATOR:
+					if (symbol.equals("+") || symbol.equals("-")) return term;
+					operator = reader.read();
+					break;
+				case PARENTHESIS:
+					if (symbol.equals(")")) return term;
+					operator = new Symbol("*", Type.OPERATOR);
+					break;
+				default:
+					throw new ExpressionParseException("operator or parenthesis", symbol, EXPRESSION, reader.getPosition() + 1);
 			}
 		}
 		return term;
@@ -102,16 +95,14 @@ public class Parser {
 	 * @throws ExpressionParseException 式が不正な場合
 	 */
 	private static Term perseParenthesizedTerm(Symbol newSymbol, Reader reader) {
-		if (newSymbol.symbol.equals("(")) {
+		if (newSymbol.symbol().equals("(")) {
 			Term term = parsePolynomial(reader);
 			Symbol parenthesis = reader.peek();
-			if (parenthesis == null) {
-				throw new ExpressionParseException("')'", EXPRESSION);
-			}
+			if (parenthesis == null) throw new ExpressionParseException("')'", EXPRESSION);
 			reader.read();
 			return term;
 		}
-		throw new ExpressionParseException("'('", newSymbol.symbol, EXPRESSION, reader.getPosition() - 1);
+		throw new ExpressionParseException("'('", newSymbol.symbol(), EXPRESSION, reader.getPosition() - 1);
 	}
 
 	/**
@@ -123,25 +114,25 @@ public class Parser {
 	 * @throws ExpressionParseException 式が不正な場合
 	 */
 	private static Term parseNegatedTerm(Symbol newSymbol, Reader reader) {
-		if (newSymbol.symbol.equals("-")) {
+		if (newSymbol.symbol().equals("-")) {
 			newSymbol = reader.read();
 			if (newSymbol != null) {
-				if (newSymbol.type == Type.NUMBER) {
-					newSymbol = new Symbol("-" + newSymbol.symbol, Type.NUMBER);
+				if (newSymbol.type() == Type.NUMBER) {
+					newSymbol = new Symbol("-" + newSymbol.symbol(), Type.NUMBER);
 					return new Term(newSymbol, null, null);
-				} else if (newSymbol.type == Type.PARENTHESIS) {
+				} else if (newSymbol.type() == Type.PARENTHESIS) {
 					Symbol mul = new Symbol("*", Type.OPERATOR);
 					Term left = new Term(new Symbol("-1", Type.NUMBER), null, null);
 					return new Term(mul, left, perseParenthesizedTerm(newSymbol, reader));
 				} else {
-					throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION,
+					throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol(), EXPRESSION,
 							reader.getPosition());
 				}
 			} else {
 				throw new ExpressionParseException("a number or parenthesis", EXPRESSION);
 			}
 		}
-		throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol, EXPRESSION,
+		throw new ExpressionParseException("a number or parenthesis", newSymbol.symbol(), EXPRESSION,
 				reader.getPosition() - 1);
 	}
 

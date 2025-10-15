@@ -46,18 +46,13 @@ public class Term {
 	 * @return このノードをルートとする部分木の計算結果（Fraction オブジェクト）
 	 */
 	private BigFraction calcFraction() {
-		switch (label.symbol) {
-		case "+":
-			return left.calcFraction().add(right.calcFraction());
-		case "-":
-			return left.calcFraction().sub(right.calcFraction());
-		case "*":
-			return left.calcFraction().mul(right.calcFraction());
-		case "/":
-			return left.calcFraction().div(right.calcFraction());
-		default:
-			return BigFraction.parseBigFraction(label.symbol);
-		}
+		return switch (label.symbol()) {
+			case "+" -> left.calcFraction().add(right.calcFraction());
+			case "-" -> left.calcFraction().sub(right.calcFraction());
+			case "*" -> left.calcFraction().mul(right.calcFraction());
+			case "/" -> left.calcFraction().div(right.calcFraction());
+			default -> BigFraction.parseBigFraction(label.symbol());
+		};
 	}
 
 	public boolean equals(Object obj) {
@@ -79,18 +74,15 @@ public class Term {
 	 * @return ラベルの文字列表現
 	 */
 	public String toString() {
-		if (label.type == Type.OPERATOR) {
-			switch (label.symbol) {
-			case "+":
-				return "add(" + left.toString() + ", " + right.toString() + ")";
-			case "-":
-				return "sub(" + left.toString() + ", " + right.toString() + ")";
-			case "*":
-				return "mul(" + left.toString() + ", " + right.toString() + ")";
-			case "/":
-				return "div(" + left.toString() + ", " + right.toString() + ")";
-			}
+		if (label.type() == Type.OPERATOR) {
+			return switch (label.symbol()) {
+				case "+" -> "add(" + left.toString() + ", " + right.toString() + ")";
+				case "-" -> "sub(" + left.toString() + ", " + right.toString() + ")";
+				case "*" -> "mul(" + left.toString() + ", " + right.toString() + ")";
+				case "/" -> "div(" + left.toString() + ", " + right.toString() + ")";
+				default -> throw new IllegalStateException("Unexpected value: " + label.symbol());
+			};
 		}
-		return label.symbol;
+		return label.symbol();
 	}
 }

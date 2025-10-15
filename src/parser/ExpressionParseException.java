@@ -1,7 +1,10 @@
 package parser;
 
+import java.io.Serial;
+
 public class ExpressionParseException extends RuntimeException {
 
+	@Serial
 	private static final long serialVersionUID = -2712091950976720972L;
 
 	public ExpressionParseException(String message) {
